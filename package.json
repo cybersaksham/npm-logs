@@ -1,0 +1,32 @@
+{
+  "name": "@cybersaksham/npm-logs",
+  "version": "1.0.0",
+  "description": "This package generates npm logs efficiently",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cybersaksham/npm-error.git"
+  },
+  "keywords": [
+    "npm-logs",
+    "npm-error",
+    "npm-warn",
+    "npm-notice",
+    "logs",
+    "error",
+    "warn",
+    "notice",
+    "cybersaksham"
+  ],
+  "author": "cybersaksham",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cybersaksham/npm-logs/issues"
+  },
+  "homepage": "https://github.com/cybersaksham/npm-logs#readme",
+  "dependencies": {
+    "chalk": "^5.2.0"
+  }
+}
