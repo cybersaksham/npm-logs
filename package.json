@@ -1,5 +1,5 @@
 {
-  "name": "@cybersaksham/npm-logs",
+  "name": "cybersaksham-npm-logs",
   "version": "1.0.0",
   "description": "This package generates npm logs efficiently",
   "main": "index.js",
