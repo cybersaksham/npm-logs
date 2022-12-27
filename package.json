@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "This package generates npm logs efficiently",
   "main": "index.js",
-  "type": "module",
-  "scripts": {},
+  "scripts": {
+    "test-error": "node test/error.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cybersaksham/npm-error.git"
@@ -27,6 +28,6 @@
   },
   "homepage": "https://github.com/cybersaksham/npm-logs#readme",
   "dependencies": {
-    "chalk": "^5.2.0"
+    "chalk": "^4.1.0"
   }
 }
