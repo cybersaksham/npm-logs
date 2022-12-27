@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cybersaksham/npm-error.git"
+    "url": "git+https://github.com/cybersaksham/npm-logs.git"
   },
   "keywords": [
     "npm-logs",
