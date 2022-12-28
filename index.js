@@ -1,3 +1,3 @@
-const { throwError } = require("./logs/npm-error");
+const { showError } = require("./logs/npm-error");
 
-module.exports = { throwError };
+module.exports = { showError };

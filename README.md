@@ -32,7 +32,7 @@ const logs = require("cybersaksham-npm-logs");
 ```js
 const logs = require("cybersaksham-npm-logs");
 
-logs.throwError({
+logs.showError({
   code: 400,
   errors: [
     "Not Found - GET https://registry.npmjs.org/error - Not found",
@@ -56,9 +56,9 @@ logs.throwError({
 npm run test-error
 ```
 
-## Arguments
+## Parameters
 
-### Error (logs.throwError)
+### Error (logs.showError)
 
 | Parameter | Type    | Defualt | Description                      |
 | --------- | ------- | ------- | -------------------------------- |

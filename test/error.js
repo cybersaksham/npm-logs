@@ -1,6 +1,6 @@
-const { throwError } = require("../logs/npm-error");
+const { showError } = require("../logs/npm-error");
 
-throwError({
+showError({
   code: 400,
   errors: [
     "Not Found - GET https://registry.npmjs.org/error - Not found",
