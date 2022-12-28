@@ -3,7 +3,7 @@ const chalk = require("chalk");
 const print = (...statements) => {
   let finalList = [
     chalk.white.bgBlack("npm"),
-    chalk.yellow.bgBlack("WARN!"),
+    chalk.yellowBright.bgBlack("WARN!"),
     ...statements,
   ];
   console.log(finalList.join(" "));
