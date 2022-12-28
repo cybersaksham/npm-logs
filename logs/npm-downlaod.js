@@ -96,16 +96,21 @@ module.exports.showProgress = ({
   });
 };
 
-module.exports.showMultipleProgress = async (fileList = [], chunksize = 10) => {
-  const progressBar = new _cliProgress.MultiBar(
+const getMultiBar = () => {
+  return new _cliProgress.MultiBar(
     {
       format,
       stopOnComplete: true,
     },
     _cliProgress.Presets.shades_classic
   );
+};
+
+module.exports.showMultipleProgress = async (fileList = [], chunksize = 10) => {
+  let progressBar = getMultiBar();
 
   let chunks = [fileList.slice(0, chunksize), fileList.slice(chunksize)];
+  let downlaoded = 0;
   let continued = 0;
 
   const waitForAvailable = () => {
@@ -145,6 +150,8 @@ module.exports.showMultipleProgress = async (fileList = [], chunksize = 10) => {
   };
 
   const downloadFile = async ({ source, destination }) => {
+    downlaoded++;
+    if (downlaoded >= 30) progressBar = getMultiBar();
     return new Promise(async (resolve, reject) => {
       let received = 0;
       let total = 100000000;
