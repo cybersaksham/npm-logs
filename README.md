@@ -170,7 +170,7 @@ npm run test-multi-download
 
 | Parameter | Type  | Defualt | Description   |
 | --------- | ----- | ------- | ------------- |
-| fileList  | Array | []      | List of files |
+| fileList  | Array | [ ]      | List of files |
 
 - Each file in `fileList` is an object & contains two fields.
 
