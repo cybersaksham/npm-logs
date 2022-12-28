@@ -96,7 +96,7 @@ module.exports.showProgress = ({
   });
 };
 
-module.exports.showMultipleProgress = (fileList = []) => {
+module.exports.showMultipleProgress = async (fileList = [], chunksize = 10) => {
   const progressBar = new _cliProgress.MultiBar(
     {
       format,
@@ -105,8 +105,43 @@ module.exports.showMultipleProgress = (fileList = []) => {
     _cliProgress.Presets.shades_classic
   );
 
-  const run = async () => {
-    await Promise.all(fileList.map((file) => downloadFile(file)));
+  let chunks = [fileList.slice(0, chunksize), fileList.slice(chunksize)];
+  let continued = 0;
+
+  const waitForAvailable = () => {
+    if (continued >= chunksize) {
+      setTimeout(waitForAvailable, 2000);
+    }
+  };
+
+  const runFile = async (file, added = false) => {
+    await downloadFile(file);
+    if (added) continued--;
+    waitForAvailable();
+    let newFile = chunks[1].shift();
+    continued++;
+    if (newFile) {
+      await runFile(newFile, true);
+    }
+  };
+
+  const runChunk = async (chunk) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await Promise.all(chunk.map(runFile));
+        resolve();
+      } catch (e) {
+        reject();
+      }
+    });
+  };
+
+  const main = async () => {
+    try {
+      await runChunk(chunks[0]);
+    } catch (e) {
+      // Ignore
+    }
   };
 
   const downloadFile = async ({ source, destination }) => {
@@ -150,11 +185,5 @@ module.exports.showMultipleProgress = (fileList = []) => {
     });
   };
 
-  run()
-    .then(() => {
-      //   console.log("Done...");
-    })
-    .catch((err) => {
-      // Ignore
-    });
+  await main();
 };

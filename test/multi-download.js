@@ -1,17 +1,12 @@
 const { showMultipleProgress } = require("../logs/npm-downlaod");
 const path = require("path");
 
-showMultipleProgress([
-  {
+let list = [];
+for (let i = 0; i < 23; i++) {
+  list.push({
     source: "https://sabnzbd.org/tests/internetspeed/20MB.bin",
-    destination: path.join(__dirname, "/20mb_1.bin"),
-  },
-  {
-    source: "https://sabnzbd.org/tests/internetspeed/20MB.bin",
-    destination: path.join(__dirname, "/20mb_2.bin"),
-  },
-  {
-    source: "https://sabnzbd.org/tests/internetspeed/20MB.bin",
-    destination: path.join(__dirname, "/20mb_3.bin"),
-  },
-]);
+    destination: path.join(__dirname, `/20mb_${i + 1}.bin`),
+  });
+}
+
+showMultipleProgress(list, 6);
