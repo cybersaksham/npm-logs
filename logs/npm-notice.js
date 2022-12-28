@@ -9,7 +9,7 @@ const print = (...statements) => {
   console.log(finalList.join(" "));
 };
 
-const showNotice = ({ notices = [], summary = [] }) => {
+module.exports.showNotice = ({ notices = [], summary = [] } = {}) => {
   notices.forEach((note) => {
     print(note);
   });
@@ -20,5 +20,3 @@ const showNotice = ({ notices = [], summary = [] }) => {
     });
   }
 };
-
-module.exports = { showNotice };

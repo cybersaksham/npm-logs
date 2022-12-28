@@ -6,7 +6,9 @@
   "scripts": {
     "test-error": "node test/error.js",
     "test-warn": "node test/warn.js",
-    "test-notice": "node test/notice.js"
+    "test-notice": "node test/notice.js",
+    "test-download": "node test/download.js",
+    "test-multi-download": "node test/multi-download.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +32,8 @@
   },
   "homepage": "https://github.com/cybersaksham/npm-logs#readme",
   "dependencies": {
-    "chalk": "^4.1.0"
+    "chalk": "^4.1.0",
+    "cli-progress": "^3.6.1",
+    "hyperquest": "^2.1.3"
   }
 }

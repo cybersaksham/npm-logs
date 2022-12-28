@@ -9,7 +9,7 @@ const print = (...statements) => {
   console.log(finalList.join(" "));
 };
 
-const showWarning = ({ warnings = [], summary = [] }) => {
+module.exports.showWarning = ({ warnings = [], summary = [] } = {}) => {
   warnings.forEach((warn) => {
     print(chalk.yellow(warn));
   });
@@ -20,5 +20,3 @@ const showWarning = ({ warnings = [], summary = [] }) => {
     });
   }
 };
-
-module.exports = { showWarning };

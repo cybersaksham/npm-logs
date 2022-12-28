@@ -86,6 +86,40 @@ logs.showNotice({
 });
 ```
 
+### Single Progress
+
+```js
+const logs = require("cybersaksham-npm-logs");
+const path = require("path");
+
+logs.showProgress({
+  source = "https://sabnzbd.org/tests/internetspeed/20MB.bin",
+  destination = path.join(__dirname + "/test.bin"),
+});
+```
+
+### Multi Progress
+
+```js
+const logs = require("cybersaksham-npm-logs");
+const path = require("path");
+
+logs.showMultipleProgress([
+  {
+    source: "https://sabnzbd.org/tests/internetspeed/20MB.bin",
+    destination: path.join(__dirname, "/20mb_1.bin"),
+  },
+  {
+    source: "https://sabnzbd.org/tests/internetspeed/20MB.bin",
+    destination: path.join(__dirname, "/20mb_2.bin"),
+  },
+  {
+    source: "https://sabnzbd.org/tests/internetspeed/20MB.bin",
+    destination: path.join(__dirname, "/20mb_3.bin"),
+  },
+]);
+```
+
 ## Test
 
 ```bash
@@ -95,6 +129,10 @@ npm run test-error
 npm run test-warn
 # Notice
 npm run test-notice
+# Single Progress
+npm run test-download
+# Notice
+npm run test-multi-download
 ```
 
 ## Parameters
@@ -120,6 +158,26 @@ npm run test-notice
 | --------- | ----- | ------- | --------------------------------- |
 | notices   | Array | [ ]     | List of notice statements to show |
 | summary   | Array | [ ]     | List of summary statements        |
+
+### Single Progress (logs.showProgress)
+
+| Parameter   | Type   | Defualt                                            | Description      |
+| ----------- | ------ | -------------------------------------------------- | ---------------- |
+| source      | String | "https://sabnzbd.org/tests/internetspeed/20MB.bin" | Source URL       |
+| destination | String | path.join(\_\_dirname + "/test.bin")               | Destination path |
+
+### Multi Progress (logs.showMultipleProgress)
+
+| Parameter | Type  | Defualt | Description   |
+| --------- | ----- | ------- | ------------- |
+| fileList  | Array | []      | List of files |
+
+- Each file in `fileList` is an object & contains two fields.
+
+| Parameter   | Type   | Defualt                                            | Description      |
+| ----------- | ------ | -------------------------------------------------- | ---------------- |
+| source      | String | "https://sabnzbd.org/tests/internetspeed/20MB.bin" | Source URL       |
+| destination | String | path.join(\_\_dirname + "/test.bin")               | Destination path |
 
 ## License
 

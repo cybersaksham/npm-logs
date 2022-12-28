@@ -9,7 +9,7 @@ const print = (...statements) => {
   console.log(finalList.join(" "));
 };
 
-const showError = ({ code = 404, errors = [], summary = [] }) => {
+module.exports.showError = ({ code = 404, errors = [], summary = [] } = {}) => {
   print(chalk.magenta("code"), "E" + code);
   errors.forEach((error) => {
     print(chalk.magenta(code), error);
@@ -21,5 +21,3 @@ const showError = ({ code = 404, errors = [], summary = [] }) => {
     });
   }
 };
-
-module.exports = { showError };
