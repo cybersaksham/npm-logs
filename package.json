@@ -1,6 +1,6 @@
 {
   "name": "cybersaksham-npm-logs",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "This package generates npm logs efficiently",
   "main": "index.js",
   "scripts": {
