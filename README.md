@@ -104,20 +104,15 @@ logs.showProgress({
 const logs = require("cybersaksham-npm-logs");
 const path = require("path");
 
-logs.showMultipleProgress([
-  {
+let list = [];
+for (let i = 0; i < 23; i++) {
+  list.push({
     source: "https://sabnzbd.org/tests/internetspeed/20MB.bin",
-    destination: path.join(__dirname, "/20mb_1.bin"),
-  },
-  {
-    source: "https://sabnzbd.org/tests/internetspeed/20MB.bin",
-    destination: path.join(__dirname, "/20mb_2.bin"),
-  },
-  {
-    source: "https://sabnzbd.org/tests/internetspeed/20MB.bin",
-    destination: path.join(__dirname, "/20mb_3.bin"),
-  },
-]);
+    destination: path.join(__dirname, `/20mb_${i + 1}.bin`),
+  });
+}
+
+logs.showMultipleProgress(list, 6);
 ```
 
 ## Test
@@ -168,9 +163,10 @@ npm run test-multi-download
 
 ### Multi Progress (logs.showMultipleProgress)
 
-| Parameter | Type  | Defualt | Description   |
-| --------- | ----- | ------- | ------------- |
-| fileList  | Array | [ ]      | List of files |
+| Parameter | Type   | Defualt | Description                         |
+| --------- | ------ | ------- | ----------------------------------- |
+| fileList  | Array  | [ ]     | List of files                       |
+| chunksize | Number | 10      | Size of chunk to download at a time |
 
 - Each file in `fileList` is an object & contains two fields.
 
