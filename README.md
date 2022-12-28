@@ -67,6 +67,25 @@ logs.showWarning({
 });
 ```
 
+### Notice
+
+```js
+const logs = require("cybersaksham-npm-logs");
+
+logs.showNotice({
+  notices: [
+    "Creating file package.json",
+    "Creating file index.js",
+    "Installing packages: npm install",
+    "Setting up...",
+  ],
+  summary: [
+    "The latest instructions for creating a new app can be found here:",
+    "https://portfolio-generator.cybersaksham.co.in/docs/getting-started/",
+  ],
+});
+```
+
 ## Test
 
 ```bash
@@ -74,6 +93,8 @@ logs.showWarning({
 npm run test-error
 # Warning
 npm run test-warn
+# Notice
+npm run test-notice
 ```
 
 ## Parameters
@@ -92,6 +113,13 @@ npm run test-warn
 | --------- | ----- | ------- | ---------------------------------- |
 | warnings  | Array | [ ]     | List of warning statements to show |
 | summary   | Array | [ ]     | List of summary statements         |
+
+### Notice (logs.showNotice)
+
+| Parameter | Type  | Defualt | Description                       |
+| --------- | ----- | ------- | --------------------------------- |
+| notices   | Array | [ ]     | List of notice statements to show |
+| summary   | Array | [ ]     | List of summary statements        |
 
 ## License
 

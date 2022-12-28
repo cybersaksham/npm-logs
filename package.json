@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test-error": "node test/error.js",
-    "test-warn": "node test/warn.js"
+    "test-warn": "node test/warn.js",
+    "test-notice": "node test/notice.js"
   },
   "repository": {
     "type": "git",
