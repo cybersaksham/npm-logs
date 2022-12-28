@@ -9,6 +9,26 @@ const numberFormat = new Intl.NumberFormat("en-us", {
   minimumFractionDigits: 2,
 });
 
+const filenameFormat = (filename, length = 40) => {
+  if (filename.length > length) {
+    return filename.substring(0, length - 3) + "...";
+  }
+
+  let pad = "";
+  for (let i = 0; i < length; i++) {
+    pad += " ";
+  }
+  let finalName = filename + pad;
+  if (finalName.length) return (filename + pad).substring(0, pad.length);
+};
+
+const snoFormat = (totalFiles) => {
+  return new Intl.NumberFormat("en-us", {
+    minimumIntegerDigits: String(totalFiles).length,
+    maximumFractionDigits: 0,
+  });
+};
+
 function format(options, params, payload) {
   // Bar
   const bar =
@@ -39,7 +59,10 @@ function format(options, params, payload) {
 
   return color(
     " > " +
-      payload.filename +
+      (payload.sno
+        ? `#${snoFormat(payload.totalFiles).format(payload.sno)} `
+        : "") +
+      filenameFormat(payload.filename) +
       "   " +
       `${percentage}%` +
       " | " +
@@ -107,6 +130,9 @@ const getMultiBar = () => {
 };
 
 module.exports.showMultipleProgress = async (fileList = [], chunksize = 10) => {
+  const totalFiles = fileList.length;
+  console.log(`Downloading ${totalFiles} files:\n`);
+
   let progressBar = getMultiBar();
 
   let chunks = [fileList.slice(0, chunksize), fileList.slice(chunksize)];
@@ -157,6 +183,8 @@ module.exports.showMultipleProgress = async (fileList = [], chunksize = 10) => {
       let total = 100000000;
       let bar = progressBar.create(1000000, 0, {
         filename: path.basename(destination),
+        sno: downlaoded,
+        totalFiles,
         speed: "N/A",
         completed: false,
         error: false,

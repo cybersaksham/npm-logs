@@ -5,7 +5,7 @@ let list = [];
 for (let i = 0; i < 23; i++) {
   list.push({
     source: "https://sabnzbd.org/tests/internetspeed/20MB.bin",
-    destination: path.join(__dirname, `/20mb_${i + 1}.bin`),
+    destination: path.join(__dirname, `/20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin20mb_${i + 1}.bin`),
   });
 }
 
