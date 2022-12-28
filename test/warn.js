@@ -8,6 +8,6 @@ showWarning({
   ],
   summary: [
     "The latest instructions for creating a new app can be found here:",
-    "https://create-react-app.dev/docs/getting-started/",
+    "https://portfolio-generator.cybersaksham.co.in/docs/getting-started/",
   ],
 });

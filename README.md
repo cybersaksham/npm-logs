@@ -49,11 +49,31 @@ logs.showError({
 });
 ```
 
+### Warning
+
+```js
+const logs = require("cybersaksham-npm-logs");
+
+logs.showWarning({
+  warnings: [
+    "You are running `portfolio-generator` 4.0.0, which is behind the latest release (4.1.0).",
+    "",
+    "We recommend always using the latest version of portfolio-generator if possible.",
+  ],
+  summary: [
+    "The latest instructions for creating a new app can be found here:",
+    "https://portfolio-generator.cybersaksham.co.in/docs/getting-started/",
+  ],
+});
+```
+
 ## Test
 
 ```bash
 # Error
 npm run test-error
+# Warning
+npm run test-warn
 ```
 
 ## Parameters
@@ -64,7 +84,14 @@ npm run test-error
 | --------- | ------- | ------- | -------------------------------- |
 | code      | Integer | 404     | Error status code                |
 | errors    | Array   | [ ]     | List of error statements to show |
-| Summary   | Array   | [ ]     | List of summary statements       |
+| summary   | Array   | [ ]     | List of summary statements       |
+
+### Warning (logs.showWarning)
+
+| Parameter | Type  | Defualt | Description                        |
+| --------- | ----- | ------- | ---------------------------------- |
+| warnings  | Array | [ ]     | List of warning statements to show |
+| summary   | Array | [ ]     | List of summary statements         |
 
 ## License
 
