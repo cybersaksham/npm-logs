@@ -124,101 +124,130 @@ const getMultiBar = () => {
     {
       format,
       stopOnComplete: true,
+      forceRedraw: true,
     },
     _cliProgress.Presets.shades_classic
   );
 };
 
 module.exports.showMultipleProgress = async (fileList = [], chunksize = 10) => {
-  const totalFiles = fileList.length;
-  console.log(`Downloading ${totalFiles} files:\n`);
+  return new Promise(async (finalResolve, finalReject) => {
+    const totalFiles = fileList.length;
+    let errorFiles = [];
+    console.log(`Downloading ${totalFiles} files:\n`);
 
-  let progressBar = getMultiBar();
+    let progressBar = getMultiBar();
 
-  let chunks = [fileList.slice(0, chunksize), fileList.slice(chunksize)];
-  let downlaoded = 0;
-  let continued = 0;
+    let chunks = [fileList.slice(0, chunksize), fileList.slice(chunksize)];
+    let downlaoded = 0;
+    let continued = 0;
 
-  const waitForAvailable = () => {
-    if (continued >= chunksize) {
-      setTimeout(waitForAvailable, 2000);
-    }
-  };
-
-  const runFile = async (file, added = false) => {
-    await downloadFile(file);
-    if (added) continued--;
-    waitForAvailable();
-    let newFile = chunks[1].shift();
-    continued++;
-    if (newFile) {
-      await runFile(newFile, true);
-    }
-  };
-
-  const runChunk = async (chunk) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await Promise.all(chunk.map(runFile));
-        resolve();
-      } catch (e) {
-        reject();
+    const waitForAvailable = () => {
+      if (continued >= chunksize) {
+        setInterval(waitForAvailable, 2000);
       }
+    };
+
+    const runFile = async (file, added = false) => {
+      await downloadFile(file);
+      if (added) continued--;
+      waitForAvailable();
+      let newFile = chunks[1].shift();
+      if (newFile) {
+        continued++;
+        await runFile(newFile, true);
+      }
+    };
+
+    const runChunk = async (chunk) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await Promise.all(chunk.map(runFile));
+          resolve();
+        } catch (e) {
+          reject();
+        }
+      });
+    };
+
+    const main = async () => {
+      try {
+        await runChunk(chunks[0]);
+      } catch (e) {
+        // Ignore
+      }
+    };
+
+    const downloadFile = async ({ source, destination }) => {
+      downlaoded++;
+      return new Promise(async (resolve, reject) => {
+        let received = 0;
+        let total = 100000000;
+        let bar = progressBar.create(1000000, 0, {
+          filename: path.basename(destination),
+          sno: downlaoded,
+          totalFiles,
+          speed: "N/A",
+          completed: false,
+          error: false,
+        });
+
+        let out = fs.createWriteStream(destination);
+        let req = hyperquest(source);
+        req.pipe(out);
+
+        req.on("response", function (res) {
+          total = res.headers["content-length"];
+          bar.setTotal(total);
+        });
+
+        req.on("data", function (chunk) {
+          received += chunk.length;
+          bar.update(received);
+        });
+
+        req.on("end", function () {
+          bar.update(received, { completed: true });
+          bar.stop();
+          out.close();
+        });
+
+        req.on("error", async (e) => {
+          await fs.promises.unlink(destination);
+          bar.update(received, { error: true });
+          bar.stop();
+          errorFiles.push({ source, destination });
+          reject(e);
+        });
+
+        bar.on("stop", () => {
+          resolve();
+        });
+      });
+    };
+
+    await main();
+
+    progressBar.on("stop", () => {
+      console.log(
+        `\nDownloaded ${
+          totalFiles - errorFiles.length
+        }/${totalFiles} files successfully.`
+      );
+      if (errorFiles.length > 0) {
+        console.log(
+          "Following files could not be downloaded due to some error. You may try to download them manually:"
+        );
+        errorFiles.map((er) => {
+          console.log("  " + chalk.red(er.source));
+        });
+        console.log();
+      }
+      finalResolve();
     });
-  };
-
-  const main = async () => {
-    try {
-      await runChunk(chunks[0]);
-    } catch (e) {
-      // Ignore
-    }
-  };
-
-  const downloadFile = async ({ source, destination }) => {
-    downlaoded++;
-    if (downlaoded >= 30) progressBar = getMultiBar();
-    return new Promise(async (resolve, reject) => {
-      let received = 0;
-      let total = 100000000;
-      let bar = progressBar.create(1000000, 0, {
-        filename: path.basename(destination),
-        sno: downlaoded,
-        totalFiles,
-        speed: "N/A",
-        completed: false,
-        error: false,
-      });
-
-      let out = fs.createWriteStream(destination);
-      let req = hyperquest(source);
-      req.pipe(out);
-
-      req.on("response", function (res) {
-        total = res.headers["content-length"];
-        bar.setTotal(total);
-      });
-
-      req.on("data", function (chunk) {
-        received += chunk.length;
-        bar.update(received);
-      });
-
-      req.on("end", function () {
-        bar.update(received, { completed: true });
-        bar.stop();
-        out.close();
-        resolve();
-      });
-
-      req.on("error", async (e) => {
-        await fs.promises.unlink(destination);
-        bar.update(received, { error: true });
-        bar.stop();
-        reject(e);
-      });
+    progressBar.on("error", () => {
+      console.log("Error occurred while downloading...");
+      finalReject();
     });
-  };
-
-  await main();
+  });
 };
