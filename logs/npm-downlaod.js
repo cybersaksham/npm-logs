@@ -73,7 +73,7 @@ function format(options, params, payload) {
 }
 
 module.exports.showProgress = ({
-  source = "https://sabnzbdfsdf.org/tests/internetspeed/20MB.bin",
+  source = "https://sabnzbd.org/tests/internetspeed/20MB.bin",
   destination = path.join(__dirname + "/test.bin"),
 } = {}) => {
   return new Promise(async (finalResolve, finalReject) => {
