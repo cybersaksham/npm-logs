@@ -32,6 +32,7 @@
   },
   "homepage": "https://github.com/cybersaksham/npm-logs#readme",
   "dependencies": {
+    "async-mutex": "^0.4.0",
     "chalk": "^4.1.0",
     "cli-progress": "^3.6.1",
     "hyperquest": "^2.1.3"

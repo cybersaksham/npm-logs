@@ -3,6 +3,7 @@ const _cliProgress = require("cli-progress");
 const fs = require("fs");
 const path = require("path");
 const chalk = require("chalk");
+const { Mutex } = require("async-mutex");
 
 const numberFormat = new Intl.NumberFormat("en-us", {
   minimumIntegerDigits: 2,
@@ -137,7 +138,9 @@ const getMultiBar = () => {
     {
       format,
       stopOnComplete: true,
+      linewrap: true,
       forceRedraw: true,
+      clearOnComplete: true,
     },
     _cliProgress.Presets.shades_classic
   );
@@ -146,14 +149,18 @@ const getMultiBar = () => {
 module.exports.showMultipleProgress = async (fileList = [], chunksize = 10) => {
   return new Promise(async (finalResolve, finalReject) => {
     const totalFiles = fileList.length;
-    let errorFiles = [];
+    let errorFiles = [],
+      errorFilesMutex = new Mutex();
     console.log(`Downloading ${totalFiles} files:\n`);
 
-    let progressBar = getMultiBar();
+    const progressBar = getMultiBar();
 
     let chunks = [fileList.slice(0, chunksize), fileList.slice(chunksize)];
-    let downlaoded = 0;
-    let continued = 0;
+    let chunksMutex = new Mutex();
+    let downlaoded = 0,
+      downloadMutex = new Mutex();
+    let continued = 0,
+      continuedMutex = new Mutex();
 
     const waitForAvailable = () => {
       if (continued >= chunksize) {
@@ -163,11 +170,19 @@ module.exports.showMultipleProgress = async (fileList = [], chunksize = 10) => {
 
     const runFile = async (file, added = false) => {
       await downloadFile(file);
-      if (added) continued--;
+      if (added) {
+        await continuedMutex.acquire();
+        continued--;
+        continuedMutex.release();
+      }
       waitForAvailable();
+      await chunksMutex.acquire();
       let newFile = chunks[1].shift();
+      chunksMutex.release();
       if (newFile) {
+        await continuedMutex.acquire();
         continued++;
+        continuedMutex.release();
         await runFile(newFile, true);
       }
     };
@@ -192,7 +207,9 @@ module.exports.showMultipleProgress = async (fileList = [], chunksize = 10) => {
     };
 
     const downloadFile = async ({ source, destination }) => {
+      await downloadMutex.acquire();
       downlaoded++;
+      downloadMutex.release();
       return new Promise(async (resolve, reject) => {
         let received = 0;
         let total = 100000000;
@@ -223,13 +240,16 @@ module.exports.showMultipleProgress = async (fileList = [], chunksize = 10) => {
           bar.update(received, { completed: true });
           bar.stop();
           out.close();
+          progressBar.remove(bar);
         });
 
         req.on("error", async (e) => {
           await fs.promises.unlink(destination);
           bar.update(received, { error: true });
           bar.stop();
+          await errorFilesMutex.acquire();
           errorFiles.push({ source, destination });
+          errorFilesMutex.release();
           reject(e);
         });
 
@@ -238,8 +258,6 @@ module.exports.showMultipleProgress = async (fileList = [], chunksize = 10) => {
         });
       });
     };
-
-    await main();
 
     progressBar.on("stop", () => {
       console.log(
@@ -262,5 +280,7 @@ module.exports.showMultipleProgress = async (fileList = [], chunksize = 10) => {
       console.log("Error occurred while downloading...");
       finalReject();
     });
+
+    await main();
   });
 };
