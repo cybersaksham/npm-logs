@@ -73,49 +73,62 @@ function format(options, params, payload) {
 }
 
 module.exports.showProgress = ({
-  source = "https://sabnzbd.org/tests/internetspeed/20MB.bin",
+  source = "https://sabnzbdfsdf.org/tests/internetspeed/20MB.bin",
   destination = path.join(__dirname + "/test.bin"),
 } = {}) => {
-  const progressBar = new _cliProgress.SingleBar(
-    {
-      format,
-    },
-    _cliProgress.Presets.shades_classic
-  );
+  return new Promise(async (finalResolve, finalReject) => {
+    const progressBar = new _cliProgress.SingleBar(
+      {
+        format,
+        // forceRedraw: true,
+      },
+      _cliProgress.Presets.shades_classic
+    );
 
-  let total = 1;
-  let received = 0;
+    let total = 1;
+    let received = 0;
+    let error = false;
 
-  let out = fs.createWriteStream(destination);
-  let req = hyperquest(source);
-  req.pipe(out);
+    let out = fs.createWriteStream(destination);
+    let req = hyperquest(source);
+    req.pipe(out);
 
-  req.on("response", function (res) {
-    total = res.headers["content-length"];
     progressBar.start(total, 0, {
       filename: path.basename(destination),
       speed: "N/A",
       completed: false,
       error: false,
     });
-  });
 
-  req.on("data", function (chunk) {
-    received += chunk.length;
-    progressBar.update(received);
-  });
+    req.on("response", function (res) {
+      total = res.headers["content-length"];
+      progressBar.setTotal(total);
+    });
 
-  req.on("end", function () {
-    progressBar.update(received, { completed: true });
-    progressBar.stop();
-    out.close();
-  });
+    req.on("data", function (chunk) {
+      received += chunk.length;
+      progressBar.update(received);
+    });
 
-  req.on("error", (e) => {
-    fs.unlink(destination, () => {});
-    progressBar.update(received, { error: true });
-    progressBar.stop();
-    console.error(e);
+    req.on("end", function () {
+      progressBar.update(received, { completed: true });
+      out.close();
+      progressBar.stop();
+    });
+
+    req.on("error", (e) => {
+      progressBar.update(received, { error: true });
+      fs.unlink(destination, () => {});
+      error = true;
+      progressBar.stop();
+    });
+
+    progressBar.on("stop", () => {
+      finalResolve();
+    });
+    progressBar.on("error", () => {
+      finalReject();
+    });
   });
 };
 
